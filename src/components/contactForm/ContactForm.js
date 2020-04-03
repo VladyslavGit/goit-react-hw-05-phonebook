@@ -5,25 +5,25 @@ import styles from "./ContactForm.module.css";
 class ContactForm extends Component {
   state = {
     name: "",
-    number: ""
+    number: "",
   };
 
-  handleSubmit = e => {
+  handleSubmit = (e) => {
     e.preventDefault();
     this.props.submitContact({
       name: this.state.name,
       number: this.state.number,
-      id: uuidv4()
+      id: uuidv4(),
     });
     this.setState({
       name: "",
-      number: ""
+      number: "",
     });
   };
 
-  handleChange = e => {
+  handleChange = (e) => {
     this.setState({
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -43,20 +43,20 @@ class ContactForm extends Component {
             required
           />
           <h2 className={styles.paragraf}>Number</h2>
-          <input
-            type="tel"
-            pattern="(\+?\d[- .]*){7,9}"
-            maxLength="9"
-            name="number"
-            placeholder="Enter Number"
-            onChange={this.handleChange}
-            value={this.state.number}
-            className={styles.input}
-            required
-          />
-          <button type="submit" className={styles.buttonAdd}>
-            Add contact
-          </button>
+          <div className={styles.numberBox}>
+            <input
+              type="tel"
+              pattern="(\+?\d[- .]*){7,10}"
+              maxLength="10"
+              name="number"
+              placeholder="Enter Number"
+              onChange={this.handleChange}
+              value={this.state.number}
+              className={styles.input}
+              required
+            />
+            <button type="submit" className={styles.buttonAdd}></button>
+          </div>
         </form>
       </>
     );
