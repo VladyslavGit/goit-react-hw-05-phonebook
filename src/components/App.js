@@ -8,6 +8,7 @@ import titleTransition from "./transitions/TitleTransition.module.css";
 import FilterTransition from "./transitions/FilterTransition.module.css";
 import NotificationTransition from "./transitions/NotificationTransition.module.css";
 import Notification from "./notification/Notification";
+import titleContactTransition from "./transitions/ContactTitleTransition.module.css";
 
 class App extends Component {
   state = {
@@ -72,7 +73,14 @@ class App extends Component {
           <h2 className={styles.title}>Phonebook</h2>
         </CSSTransition>
         <ContactForm submitContact={this.submitContact} />
-        <h2 className={styles.paragraf}>Contacts</h2>
+        <CSSTransition
+          in={this.state.contacts.length > 0}
+          timeout={700}
+          unmountOnExit
+          classNames={titleContactTransition}
+        >
+          <h2 className={styles.paragraf}>Contacts</h2>
+        </CSSTransition>
         <CSSTransition
           in={this.state.contacts.length > 1}
           timeout={700}

@@ -20,13 +20,13 @@ body {
     padding-top: 20px;
 }
 
-.paragraf {
-    margin-bottom: 10px;
-}
-
 .notificationBox {
     position: absolute;
     top: 40px;
     left: 50%;
     transform: translate(-50%, 0%);
+}
+
+.paragraf {
+    margin-bottom: 10px;
 }
