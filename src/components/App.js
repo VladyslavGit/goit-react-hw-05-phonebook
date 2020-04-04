@@ -1,60 +1,61 @@
 import React, { Component } from "react";
+import { CSSTransition } from "react-transition-group";
 import ContactForm from "./contactForm/ContactForm";
 import ContactList from "./contactList/ContactList";
 import Filter from "./filter/Filter";
 import styles from "./App.module.css";
+import titleTransition from "./transitions/TitleTransition.module.css";
+import FilterTransition from "./transitions/FilterTransition.module.css";
+import NotificationTransition from "./transitions/NotificationTransition.module.css";
+import Notification from "./notification/Notification";
 
 class App extends Component {
   state = {
-    contacts: [
-      { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
-      { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
-      { id: "id-3", name: "Eden Clements", number: "645-17-79" },
-      { id: "id-4", name: "Annie Copeland", number: "227-91-26" }
-    ],
-    filter: ""
+    contacts: [],
+    filter: "",
+    mainTitle: false,
+    notification: false,
   };
 
   componentDidMount() {
     const contacts =
       localStorage.getItem("contacts") !== null
         ? JSON.parse(localStorage.getItem("contacts"))
-        : this.state.contacts;
-    this.setState({ contacts });
+        : [];
+    this.setState({ contacts, mainTitle: true });
   }
 
   componentDidUpdate() {
     localStorage.setItem("contacts", JSON.stringify(this.state.contacts));
   }
 
-  submitContact = data => {
+  submitContact = (data) => {
     const isPersonExist = this.state.contacts.find(
-      person => person.name === data.name
+      (person) => person.name === data.name
     );
     !isPersonExist
-      ? this.setState(prevstate =>
-          data.name
-            ? { contacts: [...prevstate.contacts, data] }
-            : alert("Please enter the name")
-        )
-      : alert(`${data.name} is already in contacts.`);
+      ? this.setState((prevstate) => ({
+          contacts: [...prevstate.contacts, data],
+        }))
+      : this.setState({ notification: true });
+    setTimeout(() => this.setState({ notification: false }), 2000);
   };
 
-  deleteContact = e => {
+  deleteContact = (e) => {
     const id = e.target.id;
-    this.setState(prevstate => ({
-      contacts: prevstate.contacts.filter(contact => contact.id !== id)
+    this.setState((prevstate) => ({
+      contacts: prevstate.contacts.filter((contact) => contact.id !== id),
     }));
   };
 
-  getName = e => {
+  getName = (e) => {
     this.setState({
-      filter: e.target.value
+      filter: e.target.value,
     });
   };
 
   filterContacts = () => {
-    return this.state.contacts.filter(contact =>
+    return this.state.contacts.filter((contact) =>
       contact.name.toLowerCase().includes(this.state.filter.toLowerCase())
     );
   };
@@ -62,14 +63,38 @@ class App extends Component {
   render() {
     return (
       <div className={styles.formBox}>
-        <h2 className={styles.title}>Phonebook</h2>
+        <CSSTransition
+          in={this.state.mainTitle}
+          timeout={700}
+          unmountOnExit
+          classNames={titleTransition}
+        >
+          <h2 className={styles.title}>Phonebook</h2>
+        </CSSTransition>
         <ContactForm submitContact={this.submitContact} />
         <h2 className={styles.paragraf}>Contacts</h2>
-        <Filter getName={this.getName} />
+        <CSSTransition
+          in={this.state.contacts.length > 1}
+          timeout={700}
+          classNames={FilterTransition}
+          unmountOnExit
+        >
+          <Filter getName={this.getName} />
+        </CSSTransition>
         <ContactList
           contacts={this.filterContacts()}
           deleteContact={this.deleteContact}
         />
+        <CSSTransition
+          in={this.state.notification}
+          timeout={750}
+          classNames={NotificationTransition}
+          unmountOnExit
+        >
+          <div className={styles.notificationBox}>
+            <Notification />
+          </div>
+        </CSSTransition>
       </div>
     );
   }
